@@ -1,1 +1,1 @@
-#the areas that im currently working on.
+#the areas that im currently working on. More will soon follow.
