@@ -1,34 +1,28 @@
 ---inner join 2
--- 3. Select fields with aliases
+
 SELECT c.code AS country_code, c.name, e.year, e.inflation_rate
-FROM countries AS c
-  -- 1. Join to economies (alias e)
-  INNER JOIN economies AS e
+FROM countries AS c INNER JOIN economies AS e
     -- 2. Match on code
     ON c.code = e.code;
 
 ---inner join(3)
 
--- 6. Select fields
+
 SELECT c.code, name, region, e.year, fertility_rate, unemployment_rate
-  -- 1. From countries (alias as c)
-  FROM countries AS c
-  -- 2. Join to populations (as p)
-  INNER JOIN populations AS p
-    -- 3. Match on country code
+
+  FROM countries AS c INNER JOIN populations AS p
+    
     ON c.code = p.country_code
-  -- 4. Join to economies (as e)
+  
   INNER JOIN economies AS e
-    -- 5. Match on country code
+  
     ON c.code = e.code;
 
 ---Inner join (3)
 -- 6. Select fields
 SELECT c.code, name, region, e.year, fertility_rate, unemployment_rate
-  -- 1. From countries (alias as c)
-  FROM countries AS c
-  -- 2. Join to populations (as p)
-  INNER JOIN populations AS p
+  -- 1. From countries (alias as c), -- 2. Join to populations (as p)
+  FROM countries AS c INNER JOIN populations AS p
     -- 3. Match on country code
     ON c.code = p.country_code
   -- 4. Join to economies (as e)
@@ -76,14 +70,64 @@ FROM populations AS p1
         AND p1.year = p2.year - 5;
 --- Case when and then
 
-SELECT name, continent, code, surface_area,
-    -- 1. First case
-    CASE WHEN surface_area > 2000000 THEN 'large'
-        -- 2. Second case
-        WHEN  surface_area > 350000 THEN 'medium'
-        -- 3. Else clause + end
-        ELSE 'small' END
-        -- 4. Alias name
-        AS geosize_group
--- 5. From table
-FROM countries;
+--- INNER Challenge
+SELECT country_code, size,
+  CASE WHEN size > 50000000
+            THEN 'large'
+       WHEN size > 1000000
+            THEN 'medium'
+       ELSE 'small' END
+       AS popsize_group
+INTO pop_plus       
+FROM populations
+WHERE year = 2015;
+
+
+SELECT name, continent, geosize_group, popsize_group
+
+FROM countries_plus AS c JOIN pop_plus AS p
+
+    ON c.code = p.country_code
+
+ORDER BY geosize_group;
+
+
+
+--- CHAPTER2 - Outer joins and cross joins
+SELECT c1.name AS city, code, c2.name AS country,
+       region, city_proper_pop
+-- 1. Join right table (with alias)
+FROM cities AS c1 LEFT JOIN countries AS c2
+  -- 2. Match on country code
+    ON c1.country_code = c2.code
+-- 3. Order by descending country code
+ORDER BY code DESC;
+
+/*
+5. Select country name AS country, the country's local name,
+the language name AS language, and
+the percent of the language spoken in the country
+*/
+SELECT c.name AS country, local_name, l.name AS language, percent
+-- 1. From left table (alias as c) -- 2. Join to right table (alias as l)
+FROM countries AS c LEFT JOIN languages AS l
+  
+  
+    -- 3. Match on fields
+    ON c.code = l.code
+-- 4. Order by descending country
+ORDER BY country DESC;
+
+--LEFT JOIN
+ -- Select fields
+SELECT region, AVG(gdp_percapita) AS avg_gdp
+-- From countries (alias as c) -- Left join with economies (alias as e)
+FROM countries as c LEFT JOIN economies AS e
+    -- Match on code fields
+    ON c.code = e.code
+-- Focus on 2010
+WHERE year = 2010
+-- Group by region
+GROUP BY  region
+-- Order by descending avg_gdp
+ORDER BY avg_gdp DESC;
