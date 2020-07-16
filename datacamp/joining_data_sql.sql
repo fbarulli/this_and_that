@@ -131,3 +131,25 @@ WHERE year = 2010
 GROUP BY  region
 -- Order by descending avg_gdp
 ORDER BY avg_gdp DESC;
+
+--RIGHT JOIN
+SELECT cities.name AS city, urbanarea_pop, countries.name AS country,
+       indep_year, languages.name AS language, percent
+FROM languages
+  RIGHT JOIN countries
+    ON languages.code = countries.code
+  RIGHT JOIN cities
+    ON countries.code = cities.country_code
+ORDER BY city, language;
+--FULL JOIN
+SELECT name AS country, code, region, basic_unit
+-- 3. From countries
+FROM countries
+  -- 4. Join to currencies
+  INNER JOIN currencies
+    -- 5. Match on code
+    USING (code)
+-- 1. Where region is North America or null
+WHERE region = 'North America' OR region IS NULL
+-- 2. Order by region
+ORDER BY region;
